@@ -8,12 +8,8 @@ from torchani.units import sqrt_mhessian2invcm, sqrt_mhessian2milliev, mhessian2
 from .nn import SpeciesEnergies
 
 
-def empty_list():
-    return []
-
-
 def stack_with_padding(properties, padding):
-    output = defaultdict(empty_list)
+    output = defaultdict(list)
     for p in properties:
         for k, v in p.items():
             output[k].append(torch.as_tensor(v))
@@ -229,7 +225,8 @@ class ChemicalSymbolsToInts:
 
     Arguments:
         all_species (:class:`collections.abc.Sequence` of :class:`str`):
-            sequence of all supported species, in order.
+        sequence of all supported species, in order (it is recommended to order
+        according to atomic number).
     """
 
     def __init__(self, all_species):
@@ -359,7 +356,7 @@ def vibrational_analysis(masses, hessian, mode_type='MDU', unit='cm^-1'):
 
 
 def get_atomic_masses(species):
-    r"""Convert a tensor of znumbers into a tensor of atomic masses
+    r"""Convert a tensor of atomic numbers ("periodic table indices") into a tensor of atomic masses
 
     Atomic masses supported are the first 119 elements, and are taken from:
 

@@ -15,7 +15,7 @@ benchmark_xyz
 *.pyc
 *checkpoint*
 *.pt
-/runs
+/tests/runs
 /quicktest.py
 /*.ipt
 /*.params
@@ -30,9 +30,14 @@ dist
 *.swo
 /download
 /download.tar.xz
+/torchani/resources/*.info
+/torchani/resources/ani-1ccx_8x
+/torchani/resources/ani-2x_8x
 *.qdrep
 *.qdstrm
 *.zip
 Untitled.ipynb
 /nnp_training.py
 /test*.py
+.coverage
+htmlcov/

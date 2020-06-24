@@ -7,7 +7,6 @@ path = os.path.dirname(os.path.realpath(__file__))
 dataset_path = os.path.join(path, '../dataset/ani-1x/sample.h5')
 batch_size = 256
 ani1x = torchani.models.ANI1x()
-consts = ani1x.consts
 sae_dict = ani1x.sae_dict
 aev_computer = ani1x.aev_computer
 
@@ -108,6 +107,18 @@ class TestData(unittest.TestCase):
         len(ds)
         ds = ds.collate(batch_size)
         len(ds)
+
+    def testSAE(self):
+        tolerance = 1e-5
+        shifter = torchani.EnergyShifter(None)
+        torchani.data.load(dataset_path).subtract_self_energies(shifter)
+        true_self_energies = torch.tensor([-19.354171758844188,
+                                           -19.354171758844046,
+                                           -54.712238523648587,
+                                           -75.162829556770987], dtype=torch.float64)
+        diff = torch.abs(true_self_energies - shifter.self_energies)
+        for e in diff:
+            self.assertLess(e, tolerance)
 
     def testDataloader(self):
         shifter = torchani.EnergyShifter(None)

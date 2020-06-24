@@ -148,10 +148,10 @@ def neighbor_pairs(padding_mask: Tensor, coordinates: Tensor, cell: Tensor,
     prod = torch.cartesian_prod(all_shifts, all_atoms, all_atoms).t()
     shift_index = prod[0]
     p12 = prod[1:]
-    shifts_outide = shifts.index_select(0, shift_index)
+    shifts_outside = shifts.index_select(0, shift_index)
 
     # Step 4: combine results for all cells
-    shifts_all = torch.cat([shifts_center, shifts_outide])
+    shifts_all = torch.cat([shifts_center, shifts_outside])
     p12_all = torch.cat([p12_center, p12], dim=1)
     shift_values = shifts_all.to(cell.dtype) @ cell
 
@@ -230,9 +230,7 @@ def triple_by_molecule(atom_index12: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
     sorted_ai1, rev_indices = ai1.sort()
 
     # sort and compute unique key
-    unique_results = torch.unique_consecutive(sorted_ai1, return_inverse=True, return_counts=True)
-    uniqued_central_atom_index = unique_results[0]
-    counts = unique_results[-1]
+    uniqued_central_atom_index, counts = torch.unique_consecutive(sorted_ai1, return_inverse=False, return_counts=True)
 
     # compute central_atom_index
     pair_sizes = counts * (counts - 1) // 2
