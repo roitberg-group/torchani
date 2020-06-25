@@ -1,3 +1,7 @@
+# :warning: Warning!
+### This is an experimental version of TorchANI for internal use by the Roitberg group. One may not interpret this as a stable version. Please refer to the stable version [here.](https://github.com/aiqm/torchani) 
+
+
 # <img src=https://raw.githubusercontent.com/aiqm/torchani/master/logo1.png width=180/>  Accurate Neural Network Potential on PyTorch
 
 Metrics:
