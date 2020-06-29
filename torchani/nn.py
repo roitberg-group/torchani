@@ -134,3 +134,51 @@ class SpeciesConverter(torch.nn.Module):
         """Convert species from periodic table element index to 0, 1, 2, 3, ... indexing"""
         species, coordinates = input_
         return SpeciesCoordinates(self.conv_tensor[species].to(species.device), coordinates)
+
+
+class EMA:
+    """Exponential moving average of model parameters.
+    Arguments:
+        model (torch.nn.Module): Model with parameters whose EMA will be kept.
+        decay (float): Decay rate for exponential moving average.
+    """
+    def __init__(self, model, decay):
+        self.decay = decay
+        self.shadow = {}
+        self.original = {}
+
+        # Register model parameters
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                self.shadow[name] = param.data
+
+    def __call__(self, model):
+        decay = self.decay
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                assert name in self.shadow
+                new_average = (1.0 - decay) * param.data + decay * self.shadow[name]
+                self.shadow[name] = new_average
+
+    def assign(self, model):
+        """Assign exponential moving average of parameter values to the
+        respective parameters.
+        Arguments:
+            model (torch.nn.Module): Model to assign parameter values.
+        """
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                assert name in self.shadow
+                self.original[name] = param.data
+                param.data = self.shadow[name]
+
+    def resume(self, model):
+        """Restore original parameters to a model. That is, put back
+        the values that were in each parameter at the last call to `assign`.
+        Arguments:
+            model (torch.nn.Module): Model to assign parameter values.
+        """
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                assert name in self.shadow
+                param.data = self.original[name]
