@@ -191,7 +191,7 @@ model = torchani.nn.Sequential(aev_computer, nn).to(device)
 # .. _Decoupled Weight Decay Regularization:
 #   https://arxiv.org/abs/1711.05101
 
-AdamW = torch.optim.AdamW([
+AdamW = torchani.optim.AdamaxW([
     # H networks
     {'params': [H_network[0].weight]},
     {'params': [H_network[2].weight], 'weight_decay': 0.00001},

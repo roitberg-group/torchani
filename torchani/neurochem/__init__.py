@@ -14,7 +14,7 @@ import sys
 from ..nn import ANIModel, Ensemble, Gaussian, Sequential
 from ..utils import EnergyShifter, ChemicalSymbolsToInts
 from ..aev import AEVComputer
-from torch.optim import AdamW
+from ..optim import AdamaxW
 from collections import OrderedDict
 from torchani.units import hartree2kcalmol
 

@@ -67,6 +67,14 @@ ASE Interface
 .. automodule:: torchani.ase
 .. autoclass:: torchani.ase.Calculator
 
+
+TorchANI Optimizater	
+====================	
+
+.. automodule:: torchani.optim	
+.. autoclass:: torchani.optim.AdamaxW	
+
+
 Units
 =====
 
