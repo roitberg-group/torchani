@@ -225,6 +225,8 @@ tensorboard = torch.utils.tensorboard.SummaryWriter()
 ###############################################################################
 # In the training loop, we need to compute force, and loss for forces
 mse = torch.nn.MSELoss(reduction='none')
+mtl = torchani.loss.MTLLoss(num_tasks=2).to(device)
+AdamW.param_groups[0]['params'].append(mtl.log_sigma)
 
 print("training starting from epoch", AdamW_scheduler.last_epoch + 1)
 # We only train 3 epoches here in able to generate the docs quickly.
@@ -278,7 +280,7 @@ for _ in range(AdamW_scheduler.last_epoch + 1, max_epochs):
         # Now the total loss has two parts, energy loss and force loss
         energy_loss = (mse(predicted_energies, true_energies) / num_atoms.sqrt()).mean()
         force_loss = (mse(true_forces, forces).sum(dim=(1, 2)) / num_atoms).mean()
-        loss = energy_loss + force_coefficient * force_loss
+        loss = mtl(energy_loss, force_loss)
 
         AdamW.zero_grad()
         SGD.zero_grad()
@@ -288,6 +290,8 @@ for _ in range(AdamW_scheduler.last_epoch + 1, max_epochs):
 
         # write current batch loss to TensorBoard
         tensorboard.add_scalar('batch_loss', loss, AdamW_scheduler.last_epoch * len(training) + i)
+        training_writer.add_scalar('precision_e', mtl.get_precisions()[0], iteration)
+        training_writer.add_scalar('precision_d', mtl.get_precisions()[1], iteration)
 
     torch.save({
         'nn': nn.state_dict(),

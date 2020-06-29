@@ -35,6 +35,7 @@ from .aev import AEVComputer
 from . import utils
 from . import neurochem
 from . import models
+from . import loss
 from . import units
 from pkg_resources import get_distribution, DistributionNotFound
 
@@ -45,7 +46,7 @@ except DistributionNotFound:
     pass
 
 __all__ = ['AEVComputer', 'EnergyShifter', 'ANIModel', 'Ensemble', 'SpeciesConverter',
-           'utils', 'neurochem', 'models', 'units']
+           'utils', 'neurochem', 'models', 'units', 'loss']
 
 try:
     from . import ase  # noqa: F401
