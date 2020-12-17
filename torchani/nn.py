@@ -51,10 +51,12 @@ class ANIModel(torch.nn.ModuleDict):
     def __init__(self, modules):
         super().__init__(self.ensureOrderedDict(modules))
 
-    def forward(self, species_aev: Tuple[Tensor, Tensor],
+    def forward(self, species_aev: Tuple[Tensor, Tensor],  # type: ignore
                 cell: Optional[Tensor] = None,
                 pbc: Optional[Tensor] = None) -> SpeciesEnergies:
         species, aev = species_aev
+        assert species.shape == aev.shape[:-1]
+
         atomic_energies = self._atomic_energies((species, aev))
         # shape of atomic energies is (C, A)
         return SpeciesEnergies(species, torch.sum(atomic_energies, dim=1))
@@ -86,7 +88,7 @@ class Ensemble(torch.nn.ModuleList):
         super().__init__(modules)
         self.size = len(modules)
 
-    def forward(self, species_input: Tuple[Tensor, Tensor],
+    def forward(self, species_input: Tuple[Tensor, Tensor],  # type: ignore
                 cell: Optional[Tensor] = None,
                 pbc: Optional[Tensor] = None) -> SpeciesEnergies:
         sum_ = 0
@@ -102,7 +104,7 @@ class Sequential(torch.nn.ModuleList):
     def __init__(self, *modules):
         super().__init__(modules)
 
-    def forward(self, input_: Tuple[Tensor, Tensor],
+    def forward(self, input_: Tuple[Tensor, Tensor],  # type: ignore
                 cell: Optional[Tensor] = None,
                 pbc: Optional[Tensor] = None):
         for module in self:
@@ -128,6 +130,7 @@ class SpeciesConverter(torch.nn.Module):
         sequence of all supported species, in order (it is recommended to order
         according to atomic number).
     """
+    conv_tensor: Tensor
 
     def __init__(self, species):
         super().__init__()

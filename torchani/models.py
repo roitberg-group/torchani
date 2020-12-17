@@ -32,7 +32,6 @@ import os
 import torch
 from torch import Tensor
 from typing import Tuple, Optional, NamedTuple
-
 from .nn import SpeciesConverter, SpeciesEnergies
 from .aev import AEVComputer
 
